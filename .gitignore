@@ -1,0 +1,3 @@
+*.zip
+temp_key*
+__pycache__/

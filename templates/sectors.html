@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="sector-analysis-container">
+    <div class="section-header">
+        <h2>Sector Analysis</h2>
+    </div>
+
+    <!-- Detailed Table Section -->
+    <div class="card sector-full-card" style="margin-top: 20px;">
+        <h2>Detailed Metrics</h2>
+        <div class="table-container">
+            <table class="sector-table-full">
+                <thead>
+                    <tr>
+                        <th>Sector</th>
+                        <th>Stock Count</th>
+                        <th>Avg Price</th>
+                        <th>Total Volume</th>
+                        <th>Avg Volatility</th>
+                    </tr>
+                </thead>
+                <tbody id="sectorFullTableBody">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Analyzer (DSA)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body data-page="{{ page_id }}">
+    <div class="app-container">
+        {% if page_id != 'welcome' %}
+        <header>
+            <div class="logo">
+                <a href="/" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;">
+                    <span class="logo-icon">📊</span>
+                    <h1>StockAlgo</h1>
+                </a>
+            </div>
+            <nav class="main-nav">
+                <a href="/market" class="{% if page_id == 'market' %}active{% endif %}">Market</a>
+                <a href="/stocks" class="{% if page_id == 'stocks' %}active{% endif %}">Stocks</a>
+                <a href="/sectors" class="{% if page_id == 'sectors' %}active{% endif %}">Sectors</a>
+                <a href="/about" class="{% if page_id == 'about' %}active{% endif %}">About</a>
+            </nav>
+            {% if page_id == 'stocks' %}
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search stocks..." onkeyup="handleSearch(event)">
+            </div>
+            {% endif %}
+        </header>
+        {% endif %}
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

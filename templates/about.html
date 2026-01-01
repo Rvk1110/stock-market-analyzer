@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="about-container">
+    <h1>Architecture & Algorithms</h1>
+    <p class="intro">This application is built to demonstrate high-efficiency financial analysis using pure Data
+        Structures & Algorithms, implemented from scratch in Python.</p>
+
+    <div class="dsa-grid">
+        <div class="dsa-card">
+            <h3>1. Data Storage (Hash Map)</h3>
+            <p><strong>Goal:</strong> Instant stock retrieval.</p>
+            <ul>
+                <li><strong>Structure:</strong> Python Dictionary (Hash Table).</li>
+                <li><strong>Complexity:</strong> Average <code>O(1)</code> for search and access.</li>
+                <li><strong>Implementation:</strong> Stores <code>Stock</code> objects keyed by symbol. Handles
+                    collision resolution internally via Python's robust hashing.</li>
+            </ul>
+        </div>
+
+        <div class="dsa-card">
+            <h3>2. Search Engine (Composite)</h3>
+            <p><strong>Goal:</strong> Multi-key searching and filtering.</p>
+            <ul>
+                <li><strong>Structure:</strong> Inverted Index & Linear Scans (optimized).</li>
+                <li><strong>Complexity:</strong> <code>O(N)</code> worst case, tailored for composite matching (Symbol +
+                    Name + Sector).</li>
+                <li><strong>Feature:</strong> Allows partial matching and instant filtering across thousands of records.
+                </li>
+            </ul>
+        </div>
+
+        <div class="dsa-card">
+            <h3>3. Ranking System (Heaps)</h3>
+            <p><strong>Goal:</strong> Efficient Top-K analysis.</p>
+            <ul>
+                <li><strong>Structure:</strong> Min-Heap & Max-Heap (`heapq`).</li>
+                <li><strong>Complexity:</strong> <code>O(N log K)</code> to find top K elements.</li>
+                <li><strong>Advantage:</strong> Far superior to sorting (<code>O(N log N)</code>) when we only need the
+                    best performers. Used for Gainers, Losers, and Volume leaders.</li>
+            </ul>
+        </div>
+
+        <div class="dsa-card">
+            <h3>4. Trend Analysis (Deque)</h3>
+            <p><strong>Goal:</strong> Sliding Window Calculation.</p>
+            <ul>
+                <li><strong>Structure:</strong> Double-Ended Queue (`collections.deque`).</li>
+                <li><strong>Complexity:</strong> <code>O(1)</code> for appending new prices and popping old ones.</li>
+                <li><strong>Usage:</strong> Calculates Simple Moving Averages (SMA) and determines trend direction
+                    (UP/DOWN/STABLE) efficiently over a fixed window size.</li>
+            </ul>
+        </div>
+
+        <div class="dsa-card">
+            <h3>5. Sector Aggregation</h3>
+            <p><strong>Goal:</strong> Grouping and Statistical Analysis.</p>
+            <ul>
+                <li><strong>Structure:</strong> Hash Map of Lists.</li>
+                <li><strong>Complexity:</strong> <code>O(N)</code> single pass traversal.</li>
+                <li><strong>Logic:</strong> Iterates through all stocks once to compute aggregate metrics (Total Volume,
+                    Avg Price, Volatility) for every sector simultaneously.</li>
+            </ul>
+        </div>
+
+        <div class="dsa-card">
+            <h3>6. Hybrid Sorting</h3>
+            <p><strong>Goal:</strong> Optimized Full Listing.</p>
+            <ul>
+                <li><strong>Algorithm:</strong> Custom Hybrid Sort.</li>
+                <li><strong>Logic:</strong> Uses <strong>Quick Sort</strong> for smaller partitions (partition < 20) to
+                        exploit cache locality, and <strong>Merge Sort</strong> for larger datasets to ensure stability
+                        and <code>O(N log N)</code> worst-case performance.</li>
+            </ul>
+        </div>
+
+        <div class="dsa-card" style="grid-column: span 2;">
+            <h3>7. Mathematical Formulas & Logic</h3>
+            <p><strong>Goal:</strong> Transparent quantitative analysis.</p>
+
+            <div style="margin-top: 15px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 5px;">A. Priority Score Formula</h4>
+                <p>Used for the <code>score</code> ranking. Higher is better.</p>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-family: monospace; color: var(--accent); margin: 5px 0 15px 0;">
+                    Score = (Price * 0.5) + (Volume * 0.0001) - (Volatility * 50)
+                </div>
+                <ul style="font-size: 0.9em; color: var(--text-secondary);">
+                    <li><strong>Price (0.5)</strong>: Weights the value of the stock relative to portfolio impact.</li>
+                    <li><strong>Volume (0.0001)</strong>: Rewards liquidity. Scaled down due to large raw numbers.</li>
+                    <li><strong>Volatility (50)</strong>: Penalizes instability. High risk reduces score.</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 5px;">B. Simple Moving Average (SMA)</h4>
+                <p>Used for trend direction.</p>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-family: monospace; color: var(--accent); margin: 5px 0 15px 0;">
+                    SMA = (Σ P_i) / N
+                </div>
+                <ul style="font-size: 0.9em; color: var(--text-secondary);">
+                    <li><strong>P_i</strong>: Price at time interval <em>i</em>.</li>
+                    <li><strong>N</strong>: Window size (default 5).</li>
+                    <li><strong>Trend Logic</strong>: If Current Price > SMA + 0.5%, Trend = <strong>UP</strong>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

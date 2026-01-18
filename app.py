@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify, request
 from dataclasses import asdict
 import random
+import threading
+import time
+from datetime import datetime
 
 # Import existing DSA modules
 from models import Stock
@@ -11,6 +14,7 @@ from trend_analysis import TrendAnalyzer
 from sorting import StockSorter
 from sector_analysis import SectorAnalyzer
 from main import populate_initial_data # Reuse data population
+from live_data import LiveDataManager
 
 app = Flask(__name__)
 
@@ -21,9 +25,42 @@ ranking_manager = RankingManager(storage)
 trend_analyzer = TrendAnalyzer()
 sorter = StockSorter(threshold=20)
 sector_analyzer = SectorAnalyzer(storage)
+live_data_manager = LiveDataManager()
+
+# Track last update time
+last_update_time = datetime.now()
+data_version = 0
 
 # Initialize data
 populate_initial_data(storage)
+
+# Background refresh thread
+def background_refresh():
+    """Periodically refresh stock data from live sources"""
+    global last_update_time, data_version
+    while True:
+        time.sleep(30)  # Refresh every 30 seconds from yfinance (to avoid rate limits)
+        try:
+            print("Background refresh: Fetching updated stock data...")
+            live_stocks = live_data_manager.fetch_top_stocks()
+            
+            if live_stocks:
+                # Update existing stocks with new prices
+                for stock_data in live_stocks:
+                    existing_stock = storage.get_stock(stock_data['symbol'])
+                    if existing_stock:
+                        existing_stock.update_price(stock_data['price'])
+                
+                last_update_time = datetime.now()
+                data_version += 1
+                print(f"Background refresh complete. Version: {data_version}")
+        except Exception as e:
+            print(f"Background refresh error: {e}")
+
+# Start background thread
+refresh_thread = threading.Thread(target=background_refresh, daemon=True)
+refresh_thread.start()
+
 
 @app.route('/')
 def index():
@@ -125,6 +162,16 @@ def get_sentiment():
 def get_sectors():
     stats = sector_analyzer.calculate_sector_stats()
     return jsonify(stats)
+
+
+@app.route('/api/last-update')
+def get_last_update():
+    """Return timestamp of last data refresh and version number"""
+    return jsonify({
+        "last_update": last_update_time.isoformat(),
+        "version": data_version,
+        "timestamp": last_update_time.strftime("%I:%M:%S %p")
+    })
 
 @app.route('/api/trend/<symbol>')
 def get_trend(symbol):

@@ -1,5 +1,10 @@
 const API_BASE = '/api';
 
+// Real-time update variables
+let updateInterval = null;
+let isUpdating = true;
+let lastDataVersion = 0;
+
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
     const pageId = document.body.getAttribute('data-page');
@@ -10,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchSectors();
         fetchTopCharts();
         fetchRiskAnalysis();
+
+        // Start real-time updates
+        startRealTimeUpdates();
     } else if (pageId === 'stocks') {
         fetchStocks();
     } else if (pageId === 'sectors') {
@@ -399,4 +407,94 @@ async function viewTrend(symbol) {
     const res = await fetch(`${API_BASE}/trend/${symbol}`);
     const data = await res.json();
     alert(`Trend Analysis for ${data.symbol}:\nDirectory: ${data.trend}\nSMA (Window 5): ${data.sma.toFixed(2)}\nHistory: ${data.history}`);
+}
+
+// ============================================
+// REAL-TIME UPDATE FUNCTIONS
+// ============================================
+
+function startRealTimeUpdates() {
+    console.log("Starting real-time updates...");
+
+    // Update every 5 seconds
+    updateInterval = setInterval(async () => {
+        if (isUpdating) {
+            await updateAllCharts();
+        }
+    }, 5000);
+}
+
+function stopRealTimeUpdates() {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = null;
+    }
+    console.log("Stopped real-time updates");
+}
+
+async function updateAllCharts() {
+    try {
+        // Show update indicator
+        showUpdateIndicator(true);
+
+        // Fetch all data and update charts
+        await Promise.all([
+            fetchSentiment(),
+            fetchTopK(),
+            fetchSectors(),
+            fetchTopCharts(),
+            fetchRiskAnalysis()
+        ]);
+
+        // Update timestamp
+        await updateTimestamp();
+
+        // Hide update indicator
+        setTimeout(() => showUpdateIndicator(false), 500);
+
+    } catch (error) {
+        console.error("Error updating charts:", error);
+        showUpdateIndicator(false);
+    }
+}
+
+function showUpdateIndicator(show) {
+    const indicator = document.getElementById('liveIndicator');
+    if (indicator) {
+        if (show) {
+            indicator.classList.add('pulsing');
+        } else {
+            indicator.classList.remove('pulsing');
+        }
+    }
+}
+
+async function updateTimestamp() {
+    try {
+        const res = await fetch(`${API_BASE}/last-update`);
+        const data = await res.json();
+
+        const timestampEl = document.getElementById('lastUpdateTime');
+        if (timestampEl) {
+            timestampEl.textContent = data.timestamp;
+        }
+
+        lastDataVersion = data.version;
+    } catch (error) {
+        console.error("Error fetching timestamp:", error);
+    }
+}
+
+function toggleUpdates() {
+    isUpdating = !isUpdating;
+    const btn = document.getElementById('toggleUpdateBtn');
+    if (btn) {
+        if (isUpdating) {
+            btn.textContent = '⏸ Pause Updates';
+            btn.classList.remove('paused');
+        } else {
+            btn.textContent = '▶ Resume Updates';
+            btn.classList.add('paused');
+        }
+    }
 }

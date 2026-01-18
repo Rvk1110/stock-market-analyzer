@@ -548,3 +548,86 @@ form button {
 .chart-container canvas {
     max-height: 220px;
 }
+
+/* --- Live Update Controls --- */
+.live-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.live-indicator-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.live-indicator {
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.live-indicator.pulsing {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+}
+
+.live-text {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.last-update {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.last-update span {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.toggle-update-btn {
+    margin-left: auto;
+    padding: 8px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.toggle-update-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.toggle-update-btn.paused {
+    background: var(--text-secondary);
+}
+
+.toggle-update-btn.paused:hover {
+    background: #8a8a9a;
+}

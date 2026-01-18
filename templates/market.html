@@ -2,6 +2,18 @@
 
 {% block content %}
 <section class="analytics-dashboard">
+    <!-- Live Update Controls -->
+    <div class="live-controls">
+        <div class="live-indicator-wrapper">
+            <span id="liveIndicator" class="live-indicator"></span>
+            <span class="live-text">Live Updates</span>
+        </div>
+        <div class="last-update">
+            Last updated: <span id="lastUpdateTime">--:--:-- --</span>
+        </div>
+        <button id="toggleUpdateBtn" class="toggle-update-btn" onclick="toggleUpdates()">⏸ Pause Updates</button>
+    </div>
+    
     <h1 style="margin-bottom: 2rem; font-size: 2rem; font-weight: 700;">📊 Analytics Dashboard</h1>
 
     <div class="dashboard-grid-6">

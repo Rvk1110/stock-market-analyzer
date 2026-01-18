@@ -1,15 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="dashboard-grid">
-    <div class="card sentiment-card">
-        <h2>Market Sentiment</h2>
-        <div id="sentimentContainer" class="sentiment-stats">
-            <div class="loader"></div>
+<section class="analytics-dashboard">
+    <h1 style="margin-bottom: 2rem; font-size: 2rem; font-weight: 700;">📊 Analytics Dashboard</h1>
+
+    <div class="dashboard-grid-6">
+        <!-- 1. Market Sentiment -->
+        <div class="card chart-card">
+            <h2>Market Sentiment</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="sentimentChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Sector Price Performance -->
+        <div class="card chart-card">
+            <h2>Sector Avg Price</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="sectorPriceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 3. Sector Volume Distribution -->
+        <div class="card chart-card">
+            <h2>Sector Volume Share</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="sectorVolumeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 4. Top 5 by Price -->
+        <div class="card chart-card">
+            <h2>Top 5 - Highest Price</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="topPriceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 5. Top 5 by Volume -->
+        <div class="card chart-card">
+            <h2>Top 5 - Most Traded</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="topVolumeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 6. Risk Analysis -->
+        <div class="card chart-card">
+            <h2>Risk Analysis (Price vs Volatility)</h2>
+            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+                <canvas id="riskScatterChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="card ranking-card">
+    <!-- Top Performers List -->
+    <div class="card" style="margin-top: 2rem;">
         <div class="card-header">
             <h2>Top Performers</h2>
             <select id="rankingCriteria" onchange="fetchTopK()">
@@ -21,24 +67,6 @@
         <ul id="topKList" class="ranking-list">
             <!-- Populated by JS -->
         </ul>
-    </div>
-
-    <div class="card sector-card">
-        <h2>Sector Performance</h2>
-        <div class="table-container-small">
-            <table class="sector-table">
-                <thead>
-                    <tr>
-                        <th>Sector</th>
-                        <th>Avg Price</th>
-                        <th>Vol</th>
-                    </tr>
-                </thead>
-                <tbody id="sectorTableBody">
-                    <!-- Populated by JS -->
-                </tbody>
-            </table>
-        </div>
     </div>
 </section>
 {% endblock %}

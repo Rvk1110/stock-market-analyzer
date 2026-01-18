@@ -9,7 +9,50 @@ from ranking import RankingManager
 from trend_analysis import TrendAnalyzer
 from sorting import StockSorter
 
-def populate_dummy_data(storage: StockStorage):
+from live_data import LiveDataManager
+
+def populate_initial_data(storage: StockStorage):
+    """
+    Attempts to fetch live data from yfinance.
+    Falls back to dummy data if fetching fails or yields no results.
+    """
+    print("Initializing stock data...")
+    
+    # 1. Try Live Data
+    try:
+        dm = LiveDataManager()
+        live_stocks = dm.fetch_top_stocks()
+        
+        if live_stocks:
+            print("Using Live Market Data.")
+            for s_data in live_stocks:
+                stock = Stock(
+                    s_data['symbol'], 
+                    s_data['name'], 
+                    s_data['sector'], 
+                    s_data['price'], 
+                    s_data['volume'], 
+                    s_data['volatility']
+                )
+                
+                # Simulate history relative to current price for trends
+                stock.price_history = []
+                current = stock.price
+                for _ in range(10):
+                    # random walk backward
+                    prev = current / (1 + random.uniform(-0.02, 0.02))
+                    stock.price_history.insert(0, prev)
+                    current = prev
+                stock.price_history.append(stock.price)
+                
+                storage.add_stock(stock)
+            return # Success
+            
+    except Exception as e:
+        print(f"Live data fetch failed: {e}")
+        print("Falling back to dummy data.")
+
+    # 2. Fallback Dummy Data
     sectors = ['Tech', 'Finance', 'Health', 'Energy', 'Consumer']
     names = {
         'AAPL': 'Apple Inc.', 'GOOGL': 'Alphabet Inc.', 'MSFT': 'Microsoft Corp.',
@@ -24,9 +67,8 @@ def populate_dummy_data(storage: StockStorage):
         price = round(random.uniform(50, 2000), 2)
         volume = random.randint(10000, 5000000)
         volatility = round(random.uniform(0.1, 0.9), 2)
-        sector = random.choice(sectors) # Random sector for simplicity if not hardcoded
+        sector = random.choice(sectors) 
         
-        # Hardcode some sectors for better demo
         if symbol in ['AAPL', 'GOOGL', 'MSFT', 'NVDA', 'AMD']: sector = 'Tech'
         elif symbol in ['JPM', 'V']: sector = 'Finance'
         elif symbol in ['JNJ', 'PFE']: sector = 'Health'
@@ -34,13 +76,12 @@ def populate_dummy_data(storage: StockStorage):
         
         stock = Stock(symbol, name, sector, price, volume, volatility)
         
-        # Simulate some history
         for _ in range(10):
             change = random.uniform(-5, 5)
             stock.update_price(stock.price + change)
             
         storage.add_stock(stock)
-    print("Data populated.")
+    print("Dummy data populated.")
 
 class StockMarketCLI:
     def __init__(self):
@@ -67,7 +108,7 @@ class StockMarketCLI:
         print("9. Exit")
 
     def run(self):
-        populate_dummy_data(self.storage)
+        populate_initial_data(self.storage)
         
         while True:
             self.print_header()

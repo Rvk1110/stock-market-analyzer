@@ -10,7 +10,7 @@ from ranking import RankingManager
 from trend_analysis import TrendAnalyzer
 from sorting import StockSorter
 from sector_analysis import SectorAnalyzer
-from main import populate_dummy_data # Reuse dummy data generation
+from main import populate_initial_data # Reuse data population
 
 app = Flask(__name__)
 
@@ -23,7 +23,7 @@ sorter = StockSorter(threshold=20)
 sector_analyzer = SectorAnalyzer(storage)
 
 # Initialize data
-populate_dummy_data(storage)
+populate_initial_data(storage)
 
 @app.route('/')
 def index():

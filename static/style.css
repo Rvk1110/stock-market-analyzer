@@ -516,3 +516,35 @@ form button {
         transform: rotate(360deg);
     }
 }
+
+/* --- Analytics Dashboard (6-Chart Grid) --- */
+.analytics-dashboard {
+    padding: 20px 0;
+}
+
+.dashboard-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid-6 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-grid-6 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-card {
+    min-height: 300px;
+}
+
+.chart-container canvas {
+    max-height: 220px;
+}

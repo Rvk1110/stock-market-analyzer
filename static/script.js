@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchSentiment();
         fetchTopK();
         fetchSectors();
+        fetchTopCharts();
+        fetchRiskAnalysis();
     } else if (pageId === 'stocks') {
         fetchStocks();
     } else if (pageId === 'sectors') {
@@ -88,34 +90,260 @@ async function fetchTopK() {
 }
 
 // Sentiment
+// Sentiment Chart
 async function fetchSentiment() {
     const res = await fetch(`${API_BASE}/sentiment`);
     const data = await res.json();
 
-    const container = document.getElementById('sentimentContainer');
-    container.innerHTML = `
-        <div><span>Running Bull (UP)</span> <span class="trend-up">${data.UP || 0}</span></div>
-        <div><span>Bearish (DOWN)</span> <span class="trend-down">${data.DOWN || 0}</span></div>
-        <div><span>Sideways (STABLE)</span> <span class="trend-stable">${data.STABLE || 0}</span></div>
-    `;
+    const ctx = document.getElementById('sentimentChart').getContext('2d');
+
+    if (window.sentimentChartInstance) window.sentimentChartInstance.destroy();
+
+    window.sentimentChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Up', 'Down', 'Stable'],
+            datasets: [{
+                data: [data.UP || 0, data.DOWN || 0, data.STABLE || 0],
+                backgroundColor: ['#10b981', '#ef4444', '#6b7280'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#bbb' } }
+            }
+        }
+    });
 }
 
-// Sector Performance (Summary for Dashboard)
+// Sector Performance Charts (Price Bar + Volume Pie)
 async function fetchSectors() {
     const res = await fetch(`${API_BASE}/sectors`);
     const data = await res.json();
 
-    const tbody = document.getElementById('sectorTableBody');
-    if (tbody) {
-        tbody.innerHTML = '';
-        data.forEach(s => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${s.sector} <span style="font-size:0.8em; color:var(--text-secondary)">(${s.count})</span></td>
-                <td>$${s.avg_price.toFixed(2)}</td>
-                <td>${s.total_volume.toLocaleString()}</td>
-            `;
-            tbody.appendChild(tr);
+    // 1. Sector Price Bar Chart
+    const priceCtx = document.getElementById('sectorPriceChart');
+    if (priceCtx) {
+        if (window.sectorPriceChartInstance) window.sectorPriceChartInstance.destroy();
+
+        const labels = data.map(s => s.sector);
+        const prices = data.map(s => s.avg_price);
+
+        window.sectorPriceChartInstance = new Chart(priceCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Avg Price ($)',
+                    data: prices,
+                    backgroundColor: 'rgba(99, 102, 241, 0.6)',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#bbb' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#bbb' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // 2. Sector Volume Pie Chart
+    const volumeCtx = document.getElementById('sectorVolumeChart');
+    if (volumeCtx) {
+        if (window.sectorVolumeChartInstance) window.sectorVolumeChartInstance.destroy();
+
+        const labels = data.map(s => s.sector);
+        const volumes = data.map(s => s.total_volume);
+
+        window.sectorVolumeChartInstance = new Chart(volumeCtx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: volumes,
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(139, 92, 246, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#bbb', font: { size: 10 } }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Top 5 Charts (Price and Volume)
+async function fetchTopCharts() {
+    // Top 5 by Price
+    const priceRes = await fetch(`${API_BASE}/top-k?k=5&type=price`);
+    const priceData = await priceRes.json();
+
+    const priceCtx = document.getElementById('topPriceChart');
+    if (priceCtx) {
+        if (window.topPriceChartInstance) window.topPriceChartInstance.destroy();
+
+        window.topPriceChartInstance = new Chart(priceCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: priceData.map(s => s.symbol),
+                datasets: [{
+                    label: 'Price ($)',
+                    data: priceData.map(s => s.price),
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderColor: '#10b981',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#bbb' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#bbb' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // Top 5 by Volume
+    const volumeRes = await fetch(`${API_BASE}/top-k?k=5&type=volume`);
+    const volumeData = await volumeRes.json();
+
+    const volumeCtx = document.getElementById('topVolumeChart');
+    if (volumeCtx) {
+        if (window.topVolumeChartInstance) window.topVolumeChartInstance.destroy();
+
+        window.topVolumeChartInstance = new Chart(volumeCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: volumeData.map(s => s.symbol),
+                datasets: [{
+                    label: 'Volume',
+                    data: volumeData.map(s => s.volume),
+                    backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                    borderColor: '#f59e0b',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#bbb' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#bbb' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+}
+
+// Risk Analysis (Price vs Volatility Scatter)
+async function fetchRiskAnalysis() {
+    const res = await fetch(`${API_BASE}/stocks`);
+    const stocks = await res.json();
+
+    const scatterData = stocks.map(s => ({
+        x: s.volatility,
+        y: s.price,
+        label: s.symbol
+    }));
+
+    const ctx = document.getElementById('riskScatterChart');
+    if (ctx) {
+        if (window.riskScatterChartInstance) window.riskScatterChartInstance.destroy();
+
+        window.riskScatterChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Stocks',
+                    data: scatterData,
+                    backgroundColor: 'rgba(236, 72, 153, 0.6)',
+                    borderColor: '#ec4899',
+                    borderWidth: 1,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Volatility', color: '#bbb' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#bbb' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Price ($)', color: '#bbb' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#bbb' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const point = context.raw;
+                                return `${point.label}: $${point.y.toFixed(2)}, Vol: ${point.x}`;
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 }

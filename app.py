@@ -3,6 +3,7 @@ from dataclasses import asdict
 import random
 import threading
 import time
+import os
 from datetime import datetime
 
 # Import existing DSA modules
@@ -189,4 +190,9 @@ def get_trend(symbol):
     })
 
 if __name__ == '__main__':
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        print("\n" + "="*60)
+        print("  🚀 STOCK MARKET ANALYZER DASHBOARD IS LIVE!")
+        print("  🔗 Open your dashboard at: http://localhost:5001")
+        print("="*60 + "\n")
     app.run(debug=True, port=5001, host='0.0.0.0')

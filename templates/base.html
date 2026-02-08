@@ -28,11 +28,6 @@
                 <a href="/sectors" class="{% if page_id == 'sectors' %}active{% endif %}">Sectors</a>
                 <a href="/about" class="{% if page_id == 'about' %}active{% endif %}">About</a>
             </nav>
-            {% if page_id == 'stocks' %}
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search stocks..." onkeyup="handleSearch(event)">
-            </div>
-            {% endif %}
         </header>
         {% endif %}
 

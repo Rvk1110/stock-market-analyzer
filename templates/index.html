@@ -1,127 +1,139 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Market Analyzer (DSA)</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-    <!-- Using Chart.js for Trend Visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+{% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <h2 id="heroTitle">Stock Market<br>Analyzer</h2>
+        <p class="tagline">Real-time DSA-powered analytics for smarter trading decisions.</p>
 
-<body>
-    <div class="app-container">
-        <header>
-            <div class="logo">
-                <span class="logo-icon">📊</span>
-                <h1>StockAlgo</h1>
+        <div class="hero-buttons fade-in-up">
+            <a href="/market" class="btn-primary">View Dashboard</a>
+            <a href="/stocks" class="btn-secondary">Explore Stocks</a>
+        </div>
+
+        <div class="features-grid fade-in-up" style="animation-delay: 0.2s;">
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3>Real-Time Data</h3>
+                <p>Live updates synchronized with market movements.</p>
             </div>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search stocks, sectors..."
-                    onkeyup="handleSearch(event)">
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Deep Analytics</h3>
+                <p>Advanced charting for price, volume, and volatility.</p>
             </div>
-        </header>
-
-        <main>
-            <!-- Top Section: Market Sentiment & Quick Stats -->
-            <section class="dashboard-grid">
-                <div class="card sentiment-card">
-                    <h2>Market Sentiment</h2>
-                    <div id="sentimentContainer" class="sentiment-stats">
-                        <!-- Populated by JS -->
-                        <div class="loader"></div>
-                    </div>
-                </div>
-
-                <div class="card ranking-card">
-                    <div class="card-header">
-                        <h2>Top Performers</h2>
-                        <select id="rankingCriteria" onchange="fetchTopK()">
-                            <option value="price">Price</option>
-                            <option value="volume">Volume</option>
-                            <option value="score">DSA Score</option>
-                        </select>
-                    </div>
-                    <ul id="topKList" class="ranking-list">
-                        <!-- Populated by JS -->
-                    </ul>
-                </div>
-
-                <div class="card sector-card">
-                    <h2>Sector Performance</h2>
-                    <div class="table-container-small">
-                        <table class="sector-table">
-                            <thead>
-                                <tr>
-                                    <th>Sector</th>
-                                    <th>Avg Price</th>
-                                    <th>Vol</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sectorTableBody">
-                                <!-- Populated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Main Stock List -->
-            <section class="stock-list-section">
-                <div class="section-header">
-                    <h2>All Stocks</h2>
-                    <div class="controls">
-                        <button onclick="fetchStocks('price', 'asc')">Sort Price ↑</button>
-                        <button onclick="fetchStocks('price', 'desc')">Sort Price ↓</button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Symbol</th>
-                                <th>Name</th>
-                                <th>Sector</th>
-                                <th>Price</th>
-                                <th>Volume</th>
-                                <th>Volatility</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stockTableBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <!-- Add Stock Modal -->
-        <button class="fab" onclick="toggleModal()">+</button>
-
-        <div id="modal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="toggleModal()">&times;</span>
-                <h2>Add New Stock</h2>
-                <form id="addStockForm" onsubmit="handleAddStock(event)">
-                    <input type="text" name="symbol" placeholder="Symbol (e.g., TSLA)" required>
-                    <input type="text" name="name" placeholder="Company Name" required>
-                    <input type="text" name="sector" placeholder="Sector" required>
-                    <input type="number" step="0.01" name="price" placeholder="Price" required>
-                    <input type="number" name="volume" placeholder="Volume" required>
-                    <input type="number" step="0.01" name="volatility" placeholder="Volatility (0-1)" required>
-                    <button type="submit">Add Stock</button>
-                </form>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Instant Ranking</h3>
+                <p>Top performers identified in milliseconds via Heaps.</p>
             </div>
         </div>
     </div>
+</section>
 
-    <script src="/static/script.js"></script>
-</body>
+<!-- Project Overview Section -->
+<section class="section-light">
+    <div class="section-container scroll-animate">
+        <h2 class="section-title">Project Overview</h2>
+        <p class="section-subtitle">Bridging Financial Markets with Computer Science</p>
 
-</html>
+        <div class="overview-content" style="max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.8;">
+            <p><strong>StockAlgo</strong> is a high-performance web application designed to demonstrate the power of
+                efficient Data Structures and Algorithms (DSA) in real-time financial tracking. </p>
+            <br>
+            <p>Unlike standard dashboards, this project optimizes for speed and scalability:</p>
+            <ul style="list-style: none; margin-top: 20px;">
+                <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--accent);">✔</span> <strong>Instant Ranking:</strong> Prioritizing stocks
+                    requires constant sorting. We use <code>Max Heaps</code> to keep the top K stocks ready in O(1)
+                    access time.
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--purple-neon);">✔</span> <strong>Live Lookups:</strong> Retrieving stock
+                    details happens in O(1) time thanks to optimzed <code>Hash Maps</code>.
+                </li>
+                <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--green-neon);">✔</span> <strong>Market Volatility:</strong> We track price
+                    fluctuations using Sliding Window algorithms to detect risk instantly.
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section-dark">
+    <div class="section-container scroll-animate">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Powered by efficient Data Structures & Algorithms</p>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <h3>Max Heap Ranking</h3>
+                <p>We use a <code>Max Heap</code> to maintain top K stocks efficiently. This ensures O(N log K) time
+                    complexity for finding top performers, making it lightning fast even with massive datasets.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">02</div>
+                <h3>Hash Map Lookup</h3>
+                <p>Instant O(1) access to any stock symbol using a highly optimized <code>Hash Map</code>. No more
+                    scanning through lists to find the data you need.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">03</div>
+                <h3>Deque Sliding Window</h3>
+                <p>Real-time trend analysis uses <code>Double-Ended Queues</code> to maintain a sliding window of
+                    prices, allowing for O(1) updates and trend calculation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tech Stack Section -->
+<section class="section-light">
+    <div class="section-container scroll-animate">
+        <h2 class="section-title">Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <span class="tech-icon">🐍</span>
+                <h4>Python & Flask</h4>
+                <p>Robust Backend</p>
+            </div>
+            <div class="tech-item">
+                <span class="tech-icon">📉</span>
+                <h4>Pandas & yFinance</h4>
+                <p>Data Processing</p>
+            </div>
+            <div class="tech-item">
+                <span class="tech-icon">⚛️</span>
+                <h4>Vanilla JS</h4>
+                <p>Dynamic Frontend</p>
+            </div>
+            <div class="tech-item">
+                <span class="tech-icon">🎨</span>
+                <h4>Chart.js</h4>
+                <p>Interactive Viz</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-logo">
+            <span class="logo-icon">📊</span>
+            <h2>StockAlgo</h2>
+        </div>
+        <p class="footer-text">Advanced Stock Market Analyzer built with performance in mind.</p>
+        <div class="footer-links">
+            <a href="/market">Dashboard</a>
+            <a href="/stocks">Stocks</a>
+            <a href="/about">About</a>
+        </div>
+        <p class="copyright">© 2026 StockAlgo. All rights reserved.</p>
+    </div>
+</footer>
+
+{% endblock %}

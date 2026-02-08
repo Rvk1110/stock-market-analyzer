@@ -13,54 +13,54 @@
         </div>
         <button id="toggleUpdateBtn" class="toggle-update-btn" onclick="toggleUpdates()">⏸ Pause Updates</button>
     </div>
-    
+
     <h1 style="margin-bottom: 2rem; font-size: 2rem; font-weight: 700;">📊 Analytics Dashboard</h1>
 
-    <div class="dashboard-grid-6">
-        <!-- 1. Market Sentiment -->
-        <div class="card chart-card">
+    <div class="dashboard-layout">
+        <!-- Hero: Market Sentiment -->
+        <div class="card chart-card chart-hero">
             <h2>Market Sentiment</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+            <div class="chart-container-large">
                 <canvas id="sentimentChart"></canvas>
             </div>
         </div>
 
-        <!-- 2. Sector Price Performance -->
-        <div class="card chart-card">
-            <h2>Sector Avg Price</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
-                <canvas id="sectorPriceChart"></canvas>
+        <!-- Row 1: Sector Analysis -->
+        <div class="chart-grid-2">
+            <div class="card chart-card">
+                <h2>Sector Avg Price</h2>
+                <div class="chart-container-medium">
+                    <canvas id="sectorPriceChart"></canvas>
+                </div>
+            </div>
+            <div class="card chart-card">
+                <h2>Sector Volume Share</h2>
+                <div class="chart-container-medium">
+                    <canvas id="sectorVolumeChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <!-- 3. Sector Volume Distribution -->
-        <div class="card chart-card">
-            <h2>Sector Volume Share</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
-                <canvas id="sectorVolumeChart"></canvas>
+        <!-- Row 2: Top Performers (Price & Volume) -->
+        <div class="chart-grid-2">
+            <div class="card chart-card">
+                <h2>Top 5 - Highest Price</h2>
+                <div class="chart-container-medium">
+                    <canvas id="topPriceChart"></canvas>
+                </div>
+            </div>
+            <div class="card chart-card">
+                <h2>Top 5 - Most Traded</h2>
+                <div class="chart-container-medium">
+                    <canvas id="topVolumeChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <!-- 4. Top 5 by Price -->
-        <div class="card chart-card">
-            <h2>Top 5 - Highest Price</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
-                <canvas id="topPriceChart"></canvas>
-            </div>
-        </div>
-
-        <!-- 5. Top 5 by Volume -->
-        <div class="card chart-card">
-            <h2>Top 5 - Most Traded</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
-                <canvas id="topVolumeChart"></canvas>
-            </div>
-        </div>
-
-        <!-- 6. Risk Analysis -->
-        <div class="card chart-card">
-            <h2>Risk Analysis (Price vs Volatility)</h2>
-            <div class="chart-container" style="position: relative; height:220px; width:100%;">
+        <!-- Hero: Risk Analysis (Needs space for scatter plot) -->
+        <div class="card chart-card chart-hero">
+            <h2>Risk Analysis (Volatility vs Price)</h2>
+            <div class="chart-container-large">
                 <canvas id="riskScatterChart"></canvas>
             </div>
         </div>

@@ -83,19 +83,49 @@ def sectors():
 def about():
     return render_template('about.html', page_id='about')
 
+@app.route('/stock/<symbol>')
+def stock_detail(symbol):
+    stock = storage.get_stock(symbol.upper())
+    if not stock:
+        return render_template('404.html'), 404 # In a real app
+    return render_template('stock_detail.html', stock=stock, page_id='stocks')
+
 @app.route('/api/stocks', methods=['GET'])
 def get_stocks():
     # Supports sorting via query params
     sort_key = request.args.get('sort', 'price')
     order = request.args.get('order', 'asc')
     ascending = order == 'asc'
+    sector_filter = request.args.get('sector', '')
     
-    stocks = storage.get_all_stocks()
+    if sector_filter:
+        stocks = storage.get_stocks_by_sector(sector_filter)
+    else:
+        stocks = storage.get_all_stocks()
     
-    # Use our Hybrid Sort
-    sorted_stocks = sorter.hybrid_sort(stocks, sort_key, ascending)
+    limit = request.args.get('limit', type=int)
     
-    return jsonify([asdict(s) for s in sorted_stocks])
+    # Use our Hybrid Sort or Scoring
+    if sort_key == 'score':
+        # Calculate scores and sort
+        # We attach score temporarily or just sort by key
+        sorted_stocks = sorted(stocks, key=lambda s: ranking_manager.calculate_priority_score(s), reverse=not ascending)
+    else:
+        sorted_stocks = sorter.hybrid_sort(stocks, sort_key, ascending)
+    
+    # Apply Limit
+    if limit:
+        sorted_stocks = sorted_stocks[:limit]
+    
+    # Prepare response, including score if requested
+    response = []
+    for s in sorted_stocks:
+        s_dict = asdict(s)
+        if sort_key == 'score':
+            s_dict['score'] = ranking_manager.calculate_priority_score(s)
+        response.append(s_dict)
+
+    return jsonify(response)
 
 @app.route('/api/stocks', methods=['POST'])
 def add_stock():
@@ -130,6 +160,36 @@ def search():
         return jsonify([])
     
     results = search_manager.composite_search(query)
+    
+    # If no local results, try to fetch live data for the symbol
+    if not results:
+        print(f"No local match for '{query}', trying live fetch...")
+        live_data = live_data_manager.fetch_stock_by_symbol(query)
+        if live_data:
+            # Create new stock object
+            new_stock = Stock(
+                symbol=live_data['symbol'],
+                name=live_data['name'],
+                sector=live_data['sector'],
+                price=live_data['price'],
+                volume=live_data['volume'],
+                volatility=live_data['volatility']
+            )
+            
+            # Add simulated history (copied from main.py logic)
+            new_stock.price_history = []
+            current = new_stock.price
+            for _ in range(10):
+                prev = current / (1 + random.uniform(-0.02, 0.02))
+                new_stock.price_history.insert(0, prev)
+                current = prev
+            new_stock.price_history.append(new_stock.price)
+            
+            # Add to storage
+            storage.add_stock(new_stock)
+            
+            results.append(new_stock)
+            
     return jsonify([asdict(s) for s in results])
 
 @app.route('/api/top-k')

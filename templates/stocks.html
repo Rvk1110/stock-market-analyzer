@@ -5,6 +5,10 @@
     <div class="section-header">
         <h2>All Stocks</h2>
         <div class="controls">
+            <div class="search-bar" style="margin-right: 20px;">
+                <input type="text" id="searchInput" placeholder="Search symbol or name..."
+                    onkeyup="handleSearch(event)">
+            </div>
             <button onclick="fetchStocks('price', 'asc')">Price ↑</button>
             <button onclick="fetchStocks('price', 'desc')">Price ↓</button>
             <button class="btn-add" onclick="toggleModal()">+ Add Stock</button>

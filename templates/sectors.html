@@ -26,5 +26,53 @@
             </table>
         </div>
     </div>
+
+    <!-- Sector Explorer -->
+    <div class="card sector-explorer-card" style="margin-top: 20px; padding: 24px;">
+        <div class="card-header">
+            <h2>Top 5 Sector Stocks</h2>
+            <div class="controls" style="display: flex; gap: 12px;">
+                <select id="sectorSelect" onchange="fetchSectorStocks()"
+                    style="padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border);">
+                    <option value="">Select Sector...</option>
+                    <!-- Populated by JS -->
+                </select>
+
+                <select id="sortCriteria" onchange="fetchSectorStocks()"
+                    style="padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border);">
+                    <option value="price">By Price</option>
+                    <option value="volume">By Volume</option>
+                    <option value="volatility">By Volatility</option>
+                    <option value="score">By DSA Score</option>
+                </select>
+
+                <select id="rankingDirection" onchange="fetchSectorStocks()"
+                    style="padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border);">
+                    <option value="desc">Top (Highest)</option>
+                    <option value="asc">Bottom (Lowest)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="sector-explorer-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Volume</th>
+                        <th>Volatility</th>
+                    </tr>
+                </thead>
+                <tbody id="sectorExplorerTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align:center; color: var(--text-secondary);">Select a sector to view
+                            stocks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </section>
 {% endblock %}

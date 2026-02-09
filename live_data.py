@@ -63,6 +63,44 @@ class LiveDataManager:
         print(f"Successfully fetched {len(live_stocks)} stocks.")
         return live_stocks
 
+    def fetch_stock_by_symbol(self, symbol: str):
+        """
+        Fetches live data for a single specific symbol.
+        """
+        try:
+            ticker = yf.Ticker(symbol)
+            info = ticker.info
+            
+            # Check if valid data returned
+            if 'symbol' not in info and 'shortName' not in info:
+                 # sometimes yfinance returns minimal info for invalid tickers or rate limits
+                 # but usually 'regularMarketPrice' is a good indicator of valid trading data
+                 if 'regularMarketPrice' not in info:
+                     return None
+
+            price = info.get('currentPrice', info.get('regularMarketPrice', 0.0))
+            if not price: return None
+
+            stock_data = {
+                "symbol": info.get('symbol', symbol).upper(),
+                "name": info.get('shortName', symbol),
+                "sector": info.get('sector', 'Unknown'),
+                "price": float(price),
+                "volume": int(info.get('averageVolume', 0)),
+                "volatility": 0.5 # Default if beta missing
+            }
+            
+            # Try to get Beta for volatility
+            beta = info.get('beta', None)
+            if beta:
+                stock_data['volatility'] = min(max(beta / 3, 0.1), 0.99)
+            
+            return stock_data
+            
+        except Exception as e:
+            print(f"Error fetching {symbol}: {e}")
+            return None
+
 if __name__ == "__main__":
     # simple test
     dm = LiveDataManager()

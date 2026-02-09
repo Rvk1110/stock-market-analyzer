@@ -15,9 +15,12 @@ class TrendAnalyzer:
         if not prices:
             return 0.0
         
-        # Use deque for efficient sliding window simulation if we processed stream,
-        # but here we take a list snapshot.
-        recent_prices = prices[-self.window_size:]
+        # Use deque for efficient sliding window simulation
+        # Since deque doesn't support slicing directly, we convert to list
+        # This is O(K) where K is window size (small), so it's acceptable.
+        recent_prices = list(prices)[-self.window_size:]
+        if not recent_prices:
+            return 0.0
         return sum(recent_prices) / len(recent_prices)
 
     def analyze_trend(self, prices: List[float]) -> str:
@@ -28,7 +31,7 @@ class TrendAnalyzer:
             return "STABLE"
 
         sma = self.calculate_moving_average(prices)
-        current_price = prices[-1]
+        current_price = prices[-1] # Deque supports index -1 access
 
         # Simple threshold for stability (e.g. within 0.5% diff)
         threshold = sma * 0.005

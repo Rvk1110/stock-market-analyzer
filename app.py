@@ -308,6 +308,27 @@ def portfolio():
 def add_portfolio_item():
     data = request.json
     try:
+        # Check if stock exists in main storage, if not, try fetching it live
+        stock = storage.get_stock(data['symbol'].upper())
+        if not stock:
+            from live_data import LiveDataManager
+            dm = LiveDataManager()
+            live_data = dm.fetch_stock_by_symbol(data['symbol'])
+            if live_data:
+                # Add it to main storage first
+                from models import Stock
+                new_stock = Stock(
+                    live_data['symbol'],
+                    live_data['name'],
+                    live_data['sector'],
+                    live_data['price'],
+                    live_data['volume'],
+                    live_data['volatility']
+                )
+                storage.add_stock(new_stock)
+            else:
+                return jsonify({"error": "Stock symbol not found in market"}), 400
+
         success = portfolio_manager.add_stock(
             data['symbol'],
             int(data['quantity']),

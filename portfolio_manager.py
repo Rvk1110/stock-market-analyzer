@@ -149,7 +149,12 @@ class PortfolioManager:
         else:
             return []
             
-        return [asdict(item) for item in top_k]
+        results = []
+        for item in top_k:
+            d = asdict(item)
+            d['score'] = round(self._calculate_item_score(item), 2)
+            results.append(d)
+        return results
 
     def _calculate_item_score(self, item: PortfolioItem) -> float:
         """

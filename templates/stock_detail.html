@@ -50,8 +50,8 @@
             </div>
             <div
                 style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
-                <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">DSA Score</div>
-                <div id="dsaScore" style="font-size: 1.4em; font-weight: 600;">--</div>
+                <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">Priority Score</div>
+                <div id="priorityScore" style="font-size: 1.4em; font-weight: 600;">--</div>
             </div>
         </div>
     </div>
@@ -86,6 +86,7 @@
             }
 
             document.getElementById('smaValue').textContent = `$${data.sma.toFixed(2)}`;
+            document.getElementById('priorityScore').textContent = data.priority_score.toFixed(2);
 
             // Render Chart
             const ctx = document.getElementById('stockDetailChart').getContext('2d');

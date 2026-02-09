@@ -26,7 +26,12 @@
                 <a href="/market" class="{% if page_id == 'market' %}active{% endif %}">Market</a>
                 <a href="/stocks" class="{% if page_id == 'stocks' %}active{% endif %}">Stocks</a>
                 <a href="/sectors" class="{% if page_id == 'sectors' %}active{% endif %}">Sectors</a>
+                <a href="/portfolio" class="{% if page_id == 'portfolio' %}active{% endif %}">Portfolio</a>
                 <a href="/about" class="{% if page_id == 'about' %}active{% endif %}">About</a>
+                {% if session.get('logged_in') %}
+                <a href="/logout"
+                    style="color: var(--danger); font-weight: 700; border: 1px solid var(--danger); padding: 4px 12px; border-radius: 4px; margin-left:10px;">Logout</a>
+                {% endif %}
             </nav>
         </header>
         {% endif %}

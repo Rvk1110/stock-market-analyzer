@@ -145,134 +145,106 @@
     <div style="margin-top: 60px;">
         <h2 style="font-size: 2rem; margin-bottom: 10px; color: var(--text-primary);">📊 Analytics Dashboard</h2>
         <p class="intro">The Analytics Dashboard provides real-time visualization of market data across 6 interactive
-            charts,
-            automatically refreshing every 5 seconds with live stock data.</p>
+            charts, automatically refreshing every 5 seconds with live stock data.</p>
 
         <div class="dsa-grid">
             <div class="dsa-card">
                 <h3>1. Market Sentiment 🎯</h3>
                 <p><strong>Chart Type:</strong> Doughnut Chart</p>
-                <p><strong>Purpose:</strong> Visualizes overall market mood by categorizing stocks into three trend
-                    directions.</p>
                 <ul>
-                    <li><strong style="color: #10b981;">UP (Green):</strong> Stocks trending upward (current price > SMA
-                        + 0.5%)</li>
-                    <li><strong style="color: #ef4444;">DOWN (Red):</strong> Stocks trending downward (current price <
-                            SMA - 0.5%)</li>
-                    <li><strong style="color: #6b7280;">STABLE (Gray):</strong> Stocks with minimal movement</li>
+                    <li><strong style="color: #10b981;">UP:</strong> Price > SMA + 0.5%</li>
+                    <li><strong style="color: #ef4444;">DOWN:</strong> Price < SMA - 0.5%</li>
+                    <li><strong style="color: #6b7280;">STABLE:</strong> Range Bound</li>
                 </ul>
-                <p><strong>Insight:</strong> Quickly gauge market optimism or pessimism at a glance.</p>
             </div>
 
             <div class="dsa-card">
-                <h3>2. Sector Avg Price 💰</h3>
-                <p><strong>Chart Type:</strong> Vertical Bar Chart</p>
-                <p><strong>Purpose:</strong> Compares average stock prices across different market sectors.</p>
-                <ul>
-                    <li>Each bar represents a sector (Technology, Healthcare, Finance, etc.)</li>
-                    <li>Height indicates the average price of stocks in that sector</li>
-                    <li>Helps identify premium vs. value sectors</li>
-                </ul>
-                <p><strong>Insight:</strong> Understand which sectors have higher-priced stocks and sector valuation
-                    trends.</p>
+                <h3>2. Sector Distribution 📈</h3>
+                <p><strong>Charts:</strong> Price Avg & Volume Share.</p>
+                <p><strong>DSA:</strong> Uses a single-pass <code>O(N)</code> aggregation across all stored stocks to
+                    compute market-wide sector stats.</p>
             </div>
 
             <div class="dsa-card">
-                <h3>3. Sector Volume Share 📈</h3>
-                <p><strong>Chart Type:</strong> Pie Chart</p>
-                <p><strong>Purpose:</strong> Shows the distribution of trading volume across sectors.</p>
-                <ul>
-                    <li>Each slice represents a sector's total trading volume</li>
-                    <li>Larger slices indicate higher trading activity</li>
-                    <li>Colors differentiate between sectors</li>
-                </ul>
-                <p><strong>Insight:</strong> Identify which sectors are seeing the most trading activity and investor
-                    interest.</p>
-            </div>
-
-            <div class="dsa-card">
-                <h3>4. Top 5 - Highest Price 🏆</h3>
-                <p><strong>Chart Type:</strong> Horizontal Bar Chart</p>
-                <p><strong>Purpose:</strong> Displays the 5 most expensive stocks by current price.</p>
-                <ul>
-                    <li>Uses heap-based Top-K algorithm for efficient ranking</li>
-                    <li>Updates in real-time as prices change</li>
-                    <li>Green bars indicate premium stocks</li>
-                </ul>
-                <p><strong>Insight:</strong> Track the highest-valued stocks in your portfolio or watchlist.</p>
-            </div>
-
-            <div class="dsa-card">
-                <h3>5. Top 5 - Most Traded 🔥</h3>
-                <p><strong>Chart Type:</strong> Horizontal Bar Chart</p>
-                <p><strong>Purpose:</strong> Shows the 5 stocks with the highest trading volume.</p>
-                <ul>
-                    <li>Volume indicates liquidity and investor interest</li>
-                    <li>Orange bars highlight high-activity stocks</li>
-                    <li>Useful for identifying trending stocks</li>
-                </ul>
-                <p><strong>Insight:</strong> Discover which stocks are attracting the most trading activity.</p>
-            </div>
-
-            <div class="dsa-card">
-                <h3>6. Risk Analysis ⚠️</h3>
-                <p><strong>Chart Type:</strong> Scatter Plot</p>
-                <p><strong>Purpose:</strong> Visualizes the relationship between stock price and volatility.</p>
-                <ul>
-                    <li><strong>X-axis:</strong> Volatility (risk level)</li>
-                    <li><strong>Y-axis:</strong> Price (stock value)</li>
-                    <li>Each point represents a stock</li>
-                    <li>Top-left quadrant: High price, low risk (ideal)</li>
-                    <li>Bottom-right quadrant: Low price, high risk (risky)</li>
-                </ul>
-                <p><strong>Insight:</strong> Identify safe high-value stocks vs. risky low-value stocks for portfolio
-                    balancing.</p>
+                <h3>3. Risk Analysis ⚠️</h3>
+                <p><strong>Chart:</strong> Price vs Volatility Scatter.</p>
+                <p><strong>Metric:</strong> Identifying "High Value, Low Risk" opportunities using the Priority Score
+                    dataset.</p>
             </div>
         </div>
+    </div>
 
-        <!-- Real-Time Features -->
-        <div
-            style="margin-top: 40px; padding: 20px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius);">
-            <h3 style="color: var(--accent); margin-bottom: 15px;">🔴 Real-Time Update Features</h3>
-            <ul style="list-style: none; padding-left: 0;">
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Auto-Refresh:</strong> All charts update automatically every 5 seconds
-                </li>
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Live Indicator:</strong> Green pulsing dot shows when data is being refreshed
-                </li>
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Timestamp Display:</strong> Shows exact time of last data update
-                </li>
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Pause/Resume Control:</strong> User can pause updates to analyze data or resume for live
-                    tracking
-                </li>
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Smooth Animations:</strong> Chart.js provides seamless transitions without flickering
-                </li>
-                <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                    <span style="position: absolute; left: 0; color: var(--accent);">‣</span>
-                    <strong>Background Data Sync:</strong> Server fetches live data from Yahoo Finance every 30 seconds
-                </li>
-            </ul>
+    <!-- Portfolio Management Section (New) -->
+    <div style="margin-top: 60px;">
+        <h2 style="font-size: 2rem; margin-bottom: 10px; color: var(--text-primary);">💼 Portfolio Management</h2>
+        <p class="intro">A comprehensive system to track holdings, evaluate performance, and analyze risk across
+            multiple investment platforms.</p>
+
+        <div class="dsa-grid">
+            <div class="dsa-card">
+                <h3>Diversity Tracking (Sets) 🧩</h3>
+                <p><strong>Goal:</strong> Ensuring platform diversification.</p>
+                <ul>
+                    <li><strong>Structure:</strong> HashSet for unique platform tracking.</li>
+                    <li><strong>Complexity:</strong> <code>O(1)</code> insertion/count.</li>
+                    <li><strong>Logic:</strong> Calculates a Diversification Score based on distinct brokers used.</li>
+                </ul>
+            </div>
+
+            <div class="dsa-card">
+                <h3>Health Score Algorithm ❤️</h3>
+                <p><strong>Logic:</strong> Weighted Multi-Factor ranking.</p>
+                <div
+                    style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-family: monospace; color: var(--accent); margin: 5px 0 15px 0; font-size: 0.85em;">
+                    Health = (Profit% * 0.4) + (Diversity * 0.2) + (Volatility * 0.4)
+                </div>
+            </div>
+
+            <div class="dsa-card">
+                <h3>Deterministic Analysis 🔬</h3>
+                <p><strong>Verdict System:</strong> Buy/Hold/Exit logic based on trend indicators and priority scores,
+                    not ML models.</p>
+            </div>
         </div>
+    </div>
 
-        <!-- Data Source -->
+    <!-- Security Section (New) -->
+    <div style="margin-top: 60px;">
+        <h2 style="font-size: 2rem; margin-bottom: 10px; color: var(--text-primary);">🔐 Security & Session</h2>
         <div
-            style="margin-top: 20px; padding: 15px; background: rgba(78, 128, 238, 0.1); border-left: 4px solid var(--accent); border-radius: 6px;">
-            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-                <strong style="color: var(--accent);">📡 Data Source:</strong> Live stock data is fetched from
-                <strong>Yahoo Finance API</strong> using the <code>yfinance</code> Python library. The application
-                tracks 20 popular stocks including AAPL, GOOGL, MSFT, AMZN, TSLA, and more across Technology,
-                Healthcare, Finance, Energy, and Consumer sectors.
+            style="padding: 20px; background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border); border-radius: var(--radius);">
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                The application implements <strong>Session-Based Authentication</strong> with AES encryption.
+                All premium features and dashboard routes are protected via a <code>@login_required</code> higher-order
+                decorator, ensuring multi-user security and data privacy.
             </p>
         </div>
+    </div>
+
+    <!-- Real-Time Features -->
+    <div
+        style="margin-top: 60px; padding: 20px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius);">
+        <h3 style="color: var(--accent); margin-bottom: 15px;">🔴 Real-Time Update Features</h3>
+        <ul style="list-style: none; padding-left: 0;">
+            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;"><span
+                    style="position: absolute; left: 0; color: var(--accent);">‣</span><strong>Auto-Refresh:</strong>
+                Charts update every 5 seconds</li>
+            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;"><span
+                    style="position: absolute; left: 0; color: var(--accent);">‣</span><strong>Live Indicator:</strong>
+                Green pulsing dot for refresh status</li>
+            <li style="margin-bottom: 12px; padding-left: 25px; position: relative;"><span
+                    style="position: absolute; left: 0; color: var(--accent);">‣</span><strong>Data Sync:</strong>
+                Background thread fetches Yahoo Finance data every 30 seconds</li>
+        </ul>
+    </div>
+
+    <!-- Data Source -->
+    <div
+        style="margin-top: 20px; padding: 15px; background: rgba(78, 128, 238, 0.1); border-left: 4px solid var(--accent); border-radius: 6px;">
+        <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+            <strong style="color: var(--accent);">📡 Data Source:</strong> Live stock data is fetched from <strong>Yahoo
+                Finance API</strong> using <code>yfinance</code>.
+        </p>
     </div>
 </div>
 {% endblock %}

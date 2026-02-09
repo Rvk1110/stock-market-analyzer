@@ -522,30 +522,7 @@ async function fetchSectorStocks() {
     });
 }
 
-// Add Stock
-function toggleModal() {
-    const modal = document.getElementById('modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
 
-async function handleAddStock(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-
-    await fetch(`${API_BASE}/stocks`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-
-    toggleModal();
-    e.target.reset();
-    fetchStocks();
-    fetchSentiment(); // Updates might change sentiment
-}
 
 // View Trend (Simple Alert for Demo)
 async function viewTrend(symbol) {

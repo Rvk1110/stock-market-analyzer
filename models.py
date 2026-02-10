@@ -4,22 +4,17 @@ from collections import deque
 
 @dataclass
 class Stock:
-    """
-    Represents a single stock entity.
-    """
     symbol: str
     name: str
     sector: str
     price: float
     volume: int
-    volatility: float  # A value between 0 and 1 representing volatility
+    volatility: float
     price_history: deque = field(default_factory=lambda: deque(maxlen=100))
 
     def update_price(self, new_price: float):
-        """Updates price and appends to history."""
         self.price = new_price
         self.price_history.append(new_price)
-        # deque with maxlen handles the popping automatically in O(1)
 
     def __repr__(self):
         return f"Stock({self.symbol}, {self.name}, ${self.price}, {self.sector})"

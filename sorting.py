@@ -6,11 +6,6 @@ class StockSorter:
         self.threshold = threshold
 
     def _quick_sort(self, stocks: List[Stock], key_func: Callable[[Stock], float]) -> List[Stock]:
-        """
-        Quick Sort Implementation.
-        Average Case: O(N log N)
-        Worst Case: O(N^2)
-        """
         if len(stocks) <= 1:
             return stocks
         
@@ -24,10 +19,6 @@ class StockSorter:
         return self._quick_sort(left, key_func) + middle + self._quick_sort(right, key_func)
 
     def _merge_sort(self, stocks: List[Stock], key_func: Callable[[Stock], float]) -> List[Stock]:
-        """
-        Merge Sort Implementation.
-        Time Complexity: O(N log N) guaranteed.
-        """
         if len(stocks) <= 1:
             return stocks
 
@@ -54,11 +45,6 @@ class StockSorter:
         return result
 
     def hybrid_sort(self, stocks: List[Stock], key: str = 'price', ascending: bool = True) -> List[Stock]:
-        """
-        Hybrid Sorting Algorithm:
-        - Uses Quick Sort for small datasets (< threshold)
-        - Uses Merge Sort for large datasets (>= threshold)
-        """
         key_map = {
             'price': lambda s: s.price,
             'volume': lambda s: s.volume,
@@ -68,12 +54,9 @@ class StockSorter:
         
         key_func = key_map.get(key, lambda s: s.price)
         
-        # Select Algorithm based on dataset size
         if len(stocks) < self.threshold:
-            # print("DEBUG: Using Quick Sort")
             sorted_stocks = self._quick_sort(stocks, key_func)
         else:
-            # print("DEBUG: Using Merge Sort")
             sorted_stocks = self._merge_sort(stocks, key_func)
             
         if not ascending:

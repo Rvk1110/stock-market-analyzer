@@ -12,13 +12,8 @@ from sorting import StockSorter
 from live_data import LiveDataManager
 
 def populate_initial_data(storage: StockStorage):
-    """
-    Attempts to fetch live data from yfinance.
-    Falls back to dummy data if fetching fails or yields no results.
-    """
     print("Initializing stock data...")
     
-    # 1. Try Live Data
     try:
         dm = LiveDataManager()
         live_stocks = dm.fetch_top_stocks()
@@ -35,24 +30,22 @@ def populate_initial_data(storage: StockStorage):
                     s_data['volatility']
                 )
                 
-                # Simulate history relative to current price for trends
                 stock.price_history = []
                 current = stock.price
                 for _ in range(10):
-                    # random walk backward
                     prev = current / (1 + random.uniform(-0.02, 0.02))
                     stock.price_history.insert(0, prev)
                     current = prev
                 stock.price_history.append(stock.price)
                 
                 storage.add_stock(stock)
-            return # Success
+            return
             
     except Exception as e:
         print(f"Live data fetch failed: {e}")
         print("Falling back to dummy data.")
 
-    # 2. Fallback Dummy Data
+
     sectors = ['Tech', 'Finance', 'Health', 'Energy', 'Consumer']
     names = {
         'AAPL': 'Apple Inc.', 'GOOGL': 'Alphabet Inc.', 'MSFT': 'Microsoft Corp.',
@@ -89,7 +82,7 @@ class StockMarketCLI:
         self.search_manager = SearchManager(self.storage)
         self.ranking_manager = RankingManager(self.storage)
         self.trend_analyzer = TrendAnalyzer()
-        self.sorter = StockSorter(threshold=10) # Low threshold to demo Quick Sort vs Merge Sort
+        self.sorter = StockSorter(threshold=10)
 
     def print_header(self):
         print("\n==========================================")

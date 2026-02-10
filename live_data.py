@@ -3,7 +3,6 @@ import random
 
 class LiveDataManager:
     def __init__(self):
-        # List of popular stocks to track
         self.popular_symbols = [
             'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 
             'JPM', 'V', 'JNJ', 'PFE', 'XOM', 
@@ -12,31 +11,23 @@ class LiveDataManager:
         ]
 
     def fetch_top_stocks(self):
-        """
-        Fetches live data for the defined popular symbols.
-        Returns a list of dictionaries suited for the Stock model.
-        """
         print(f"Fetching live data for {len(self.popular_symbols)} stocks...")
         live_stocks = []
         
         try:
-            # Batch fetch is faster
             tickers = yf.Tickers(" ".join(self.popular_symbols))
             
             for symbol in self.popular_symbols:
                 try:
                     info = tickers.tickers[symbol].info
                     
-                    # Extract Data
                     name = info.get('shortName', symbol)
                     sector = info.get('sector', 'Unknown')
                     price = info.get('currentPrice', info.get('regularMarketPrice', 0.0))
                     volume = info.get('averageVolume', 0)
                     
-                    # Calculate/Simulate volatility (beta is a good proxy, or randomize)
                     beta = info.get('beta', None)
                     if beta:
-                        # Normalize beta roughly to 0-1 for our 'volatility' field (just for demo logic)
                         volatility = min(max(beta / 3, 0.1), 0.99)
                     else:
                         volatility = round(random.uniform(0.1, 0.9), 2)
@@ -64,17 +55,11 @@ class LiveDataManager:
         return live_stocks
 
     def fetch_stock_by_symbol(self, symbol: str):
-        """
-        Fetches live data for a single specific symbol.
-        """
         try:
             ticker = yf.Ticker(symbol)
             info = ticker.info
             
-            # Check if valid data returned
             if 'symbol' not in info and 'shortName' not in info:
-                 # sometimes yfinance returns minimal info for invalid tickers or rate limits
-                 # but usually 'regularMarketPrice' is a good indicator of valid trading data
                  if 'regularMarketPrice' not in info:
                      return None
 
@@ -87,10 +72,9 @@ class LiveDataManager:
                 "sector": info.get('sector', 'Unknown'),
                 "price": float(price),
                 "volume": int(info.get('averageVolume', 0)),
-                "volatility": 0.5 # Default if beta missing
+                "volatility": 0.5
             }
             
-            # Try to get Beta for volatility
             beta = info.get('beta', None)
             if beta:
                 stock_data['volatility'] = min(max(beta / 3, 0.1), 0.99)
@@ -102,7 +86,6 @@ class LiveDataManager:
             return None
 
 if __name__ == "__main__":
-    # simple test
     dm = LiveDataManager()
     data = dm.fetch_top_stocks()
     for d in data[:3]:

@@ -6,7 +6,6 @@ import time
 import os
 from datetime import datetime
 
-# Import existing DSA modules
 from models import Stock
 from storage import StockStorage
 from search import SearchManager
@@ -19,7 +18,6 @@ from live_data import LiveDataManager
 
 app = Flask(__name__)
 
-# Global instances (mimicking the persistent state of the CLI app)
 storage = StockStorage()
 search_manager = SearchManager(storage)
 ranking_manager = RankingManager(storage)
@@ -28,25 +26,21 @@ sorter = StockSorter(threshold=20)
 sector_analyzer = SectorAnalyzer(storage)
 live_data_manager = LiveDataManager()
 
-# Track last update time
 last_update_time = datetime.now()
 data_version = 0
 
-# Initialize data
 populate_initial_data(storage)
 
-# Background refresh thread
 def background_refresh():
-    """Periodically refresh stock data from live sources"""
     global last_update_time, data_version
     while True:
-        time.sleep(30)  # Refresh every 30 seconds from yfinance (to avoid rate limits)
+        time.sleep(30)
         try:
             print("Background refresh: Fetching updated stock data...")
             live_stocks = live_data_manager.fetch_top_stocks()
             
             if live_stocks:
-                # Update existing stocks with new prices
+
                 for stock_data in live_stocks:
                     existing_stock = storage.get_stock(stock_data['symbol'])
                     if existing_stock:
@@ -58,7 +52,6 @@ def background_refresh():
         except Exception as e:
             print(f"Background refresh error: {e}")
 
-# Start background thread
 refresh_thread = threading.Thread(target=background_refresh, daemon=True)
 refresh_thread.start()
 
@@ -87,12 +80,12 @@ def about():
 def stock_detail(symbol):
     stock = storage.get_stock(symbol.upper())
     if not stock:
-        return render_template('404.html'), 404 # In a real app
+        return render_template('404.html'), 404
     return render_template('stock_detail.html', stock=stock, page_id='stocks')
 
 @app.route('/api/stocks', methods=['GET'])
 def get_stocks():
-    # Supports sorting via query params
+
     sort_key = request.args.get('sort', 'price')
     order = request.args.get('order', 'asc')
     ascending = order == 'asc'
@@ -105,19 +98,16 @@ def get_stocks():
     
     limit = request.args.get('limit', type=int)
     
-    # Use our Hybrid Sort or Scoring
     if sort_key == 'score':
-        # Calculate scores and sort
-        # We attach score temporarily or just sort by key
         sorted_stocks = sorted(stocks, key=lambda s: ranking_manager.calculate_priority_score(s), reverse=not ascending)
     else:
         sorted_stocks = sorter.hybrid_sort(stocks, sort_key, ascending)
     
-    # Apply Limit
+
     if limit:
         sorted_stocks = sorted_stocks[:limit]
     
-    # Prepare response, including score if requested
+
     response = []
     for s in sorted_stocks:
         s_dict = asdict(s)
@@ -131,15 +121,12 @@ def get_stocks():
 def add_stock():
     data = request.json
     try:
-        # Check if exists
         existing = storage.get_stock(data['symbol'])
         if existing:
-            # Update price if it's the only field provided or intended
             if 'price' in data:
                 existing.update_price(float(data['price']))
                 return jsonify({"message": "Stock updated", "stock": asdict(existing)})
         
-        # Create new
         new_stock = Stock(
             symbol=data['symbol'],
             name=data['name'],
@@ -161,12 +148,12 @@ def search():
     
     results = search_manager.composite_search(query)
     
-    # If no local results, try to fetch live data for the symbol
+
     if not results:
         print(f"No local match for '{query}', trying live fetch...")
         live_data = live_data_manager.fetch_stock_by_symbol(query)
         if live_data:
-            # Create new stock object
+
             new_stock = Stock(
                 symbol=live_data['symbol'],
                 name=live_data['name'],
@@ -176,7 +163,6 @@ def search():
                 volatility=live_data['volatility']
             )
             
-            # Add simulated history (copied from main.py logic)
             new_stock.price_history = []
             current = new_stock.price
             for _ in range(10):
@@ -185,7 +171,6 @@ def search():
                 current = prev
             new_stock.price_history.append(new_stock.price)
             
-            # Add to storage
             storage.add_stock(new_stock)
             
             results.append(new_stock)
@@ -195,7 +180,7 @@ def search():
 @app.route('/api/top-k')
 def get_top_k():
     k = int(request.args.get('k', 5))
-    criteria = request.args.get('type', 'price') # price, volume, score
+    criteria = request.args.get('type', 'price')
     sector = request.args.get('sector', '')
     
     if sector:
@@ -203,7 +188,6 @@ def get_top_k():
     else:
         results = ranking_manager.get_top_k_stocks(k, criteria)
         
-    # Serialize and add score if needed for display
     response = []
     for s in results:
         s_dict = asdict(s)
@@ -227,7 +211,6 @@ def get_sectors():
 
 @app.route('/api/last-update')
 def get_last_update():
-    """Return timestamp of last data refresh and version number"""
     return jsonify({
         "last_update": last_update_time.isoformat(),
         "version": data_version,
